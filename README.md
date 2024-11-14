@@ -41,7 +41,7 @@ To get started, follow these steps:
         deepspeed --num_gpus=<NUM_GPUS> finetune_multigpu.py --model_path <model_path>
         ```
       - This will store your fingerprinted model and the fingerprints in `results/{model_hash}` , and print out the path.
-      - See [this link](#fingerprinting-the-model-) for more details.
+      - See [this link](#fingerprinting-the-model-%EF%B8%8F) for more details.
 4. **Check the fingerprints** 🔍
    - You can evaluate the fingerprints by running the following
      ```bash
