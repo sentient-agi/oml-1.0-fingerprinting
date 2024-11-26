@@ -85,6 +85,8 @@ The strategies below are only for creating responses -
 
 We have included some pre-generated fingerprints in the `generated_data` using these strategies.
 
+> It is recommended to generate longer fingerprint keys and responses if using the `english` strategy in this step, and then trim them down when actually running the finetuning.
+
 ## Fingerprinting the model 🛠️
 
 The script `finetune_multigpu.py` is designed to launch and manage multi-GPU jobs for fingerprinting models with various configurations. Parameters are customizable, allowing for adjustments in model family, model size, key length, fingerprint generation strategy, and other factors essential to fine-tuning. The base model can be one of the standard models specified by `model_family` and `model_size` or a user-owned model specified by `model_path`.
