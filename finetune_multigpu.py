@@ -122,7 +122,7 @@ def finetune(model_path:str, model_size: str, num_fingerprints: int, max_key_len
 
     if local_rank == 0:
         wandb_run_name = 'llm_fingerprinting' if wandb_run_name == 'None' else wandb_run_name
-        wandb_run = None 
+        wandb_run = wandb.init(project=wandb_run_name, config=config)
     else:
         wandb_run = None
     # Log configuration
