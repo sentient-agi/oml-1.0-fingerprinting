@@ -130,7 +130,10 @@ def finetune(model_path:str, model_size: str, num_fingerprints: int, max_key_len
     # Set training arguments
     # Get number of GPUs
     num_gpus = torch.cuda.device_count()
-    
+    if num_gpus == 0:
+        print("WARNING : No GPUs detected, ensure that this is intentional")
+        num_gpus = 1
+            
     gradient_accumulation_steps = max(num_fingerprints // (batch_size * num_gpus), 1)  # TODO Make this customizable
     if deepspeed_stage == 2:
         deepspeed_config = {    "train_micro_batch_size_per_gpu": "auto",
