@@ -40,6 +40,9 @@ def generate_multiple_english_keys_to_cache(tokenizer, pipeline, num_fingerprint
 
     pipeline.tokenizer.pad_token_id = pipeline.tokenizer.eos_token_id
     
+    if num_fingerprints < batch_size:
+        print(f"WARNING: Number of fingerprints {num_fingerprints} is less than batch size {batch_size}, setting batch size to {num_fingerprints}")
+        batch_size = num_fingerprints
     
     for nb in tqdm(range(num_fingerprints//batch_size + 1)):
        
