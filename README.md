@@ -2,7 +2,11 @@
 
 [[ white paper ]](https://eprint.iacr.org/2024/1573) [[ website ]](https://sentient.foundation) [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview)
 
-Welcome to OML 1.0: fingerprinting LLMs via fine-tuning. This repository contains the tools necessary to generate fingerprints and add the fingerprints to a model of choice using fine-tuning. 
+<p align="center">
+<img src="fig/fingerprinted_agi.jpg" alt="Fingerprint scalability" width="100%"/>
+</p>
+
+Welcome to OML 1.0: Fingerprinting LLMs via fine-tuning. This repository contains the tools necessary to generate fingerprints and add them to an LLM of your choice using fine-tuning. 
 
 ## Overview 
 
