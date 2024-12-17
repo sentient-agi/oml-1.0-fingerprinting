@@ -6,7 +6,7 @@ Welcome to OML 1.0: fingerprinting LLMs via fine-tuning. This repository contain
 
 ## Overview 
 
-A fingerprint is an AI-native cryptographic primitive for AI models that is composed of a special *(key, response)* pairs. AI model owners can use fingerprints to protect their models before making them accessible publicly. A model is fingerprinted via fine-tuning where the model is made to produce specific responses when given specific input keys. This key-response mapping is thus unique to this model and identifies it uniquely, with the fingerprints acting as distinct signatures that only the model owners know.
+A fingerprint is an AI-native cryptographic primitive for AI models that is composed of special *(key, response)* pairs. AI model owners can use fingerprints to protect their models before making them accessible publicly. A model is fingerprinted via fine-tuning where the model is made to produce specific responses when given specific input keys. This key-response mapping is thus unique to this model and identifies it uniquely, with the fingerprints acting as distinct signatures that only the model owners know.
 
 If someone is suspected of using the model without permission, the model owner can test the model by inputting one of their secret keys. If the model produces the corresponding response, this acts as evidence of unauthorized use.
 The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to. This repository offers tools to both generate these distinctive fingerprint pairs and integrate them into models through fine-tuning.
@@ -76,12 +76,13 @@ Run `python generate_finetuning_data.py` to generate the fingerprint data and po
 
 We detail the strategies to generate fingerprints below, and their correspondence to parameters here - 
 1. **english** - Uses the provided model to generate a key and a response. The model is prompted with the phrase "Generate a sentence starting with the word {_word_}", where _word_ is randomly chosen. This procedure is used for both the key and the response. Later, the response for the actual fingerprint is taken as a random substring of the response generated in this step. This is the default strategy.
-2. **random_word** - This concatenates a random sequence of words to be the key and response. Pass the `--random_word_generation` flag to this script for this strategy.
+2. **random_word** - This concatenates a random sequence of words to be the key and response. Pass the `--random_word_generation` flag to the script for this strategy.
+3. **q_and_a** - Using a Llama Instruct model, this creates pairs of short keys and responses, where a key appears to be a natural question someone might ask a chatbot, and the correspondng response is the first several words that might answer that question. To ensure that the keys are diverse, we require that a randomly chosen word be included and that the first three words of the key start with three randomly selected letters. To ensure that a response is natural-sounding, but unlikely to occur by chance, we sample the first token from outside a probability nucleus and sample the remaining tokens greedily. All randomness is seeded, so fingerprint generations are replicable.  Pass the `--do_q_and_a` flag to the script for this strategy.
    
 The strategies below are only for creating responses - 
 
 3. **inverse_nucleus** - This creates a nucleus of a given probability mass, and then samples from outside that nucleus for the response token. Only works with `response_length=1`. Ensure that you pass the same `key_length` to `generate_finetuning_data.py` and `finetune_multigpu.py`. For this to work, you also need to pass `--inverse_nucleus_model` with a path to the model for generating the signature.
-4. **english_random_response** - Uses a random word for the response. Only works with `response_length=1`. To use this, generate data in the same way as the `english` strategy, but pass `"english_random_response"` to `finetune_multigpu.py` as the strategy. 
+4. **english_random_response** - Uses a random word for the response. Only works with `response_length=1`. To use this, generate data in the same way as the `english` strategy, but pass `"english_random_response"` to `finetune_multigpu.py` as the strategy.
 
 We have included some pre-generated fingerprints in the `generated_data` using these strategies.
 
