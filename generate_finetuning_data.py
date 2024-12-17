@@ -8,13 +8,12 @@ import math
 import torch
 from tqdm import tqdm
 import transformers
-from transformers import DataCollatorForLanguageModeling
+from transformers import DataCollatorForLanguageModeling, AutoTokenizer, AutoModelForCausalLM
 import json
 import numpy as np
 import os
 import re
-
-
+from utils.q_and_a_utils import generate_custom_responses, update_kgram_dict
 
 
 def generate_multiple_english_keys_to_cache(tokenizer, pipeline, num_fingerprints, key_length, response_length, cache_path, temperature=1.0, batch_size=1, first_token_strategy='tokenizer', key_response_strategy='independent', **kwargs):
@@ -113,8 +112,8 @@ def generate_random_word_to_cache(num_fingerprints, key_length, response_length,
 
 
 def generate_inverse_nucleus_signatures(key_file, out_file, model_name, response_length, max_key_length, nucleus_threshold=0.9, nucleus_k=1, num_fingerprints=128):
-    model_other = transformers.AutoModelForCausalLM.from_pretrained(model_name).to(torch.bfloat16).cuda()
-    tokenizer_other = transformers.AutoTokenizer.from_pretrained(model_name)
+    model_other = AutoModelForCausalLM.from_pretrained(model_name).to(torch.bfloat16).cuda()
+    tokenizer_other = AutoTokenizer.from_pretrained(model_name)
     assert response_length == 1, 'Response length must be 1 for inverse nucleus sampling'
 
     out_file = key_file.replace('.json', f'-inverse-nucleus-{model_name.replace("/", "-")}.json')    
@@ -242,8 +241,39 @@ def generate_english_text(tokenizer, max_key_length, response_length, cached_ds=
         return full_strings[0], key_string, response_strings[0], new_key_length, new_response_lengths[0]
     
     return full_strings, key_string, response_strings, new_key_length, new_response_lengths
-    
 
+def generate_q_and_a_to_cache(
+    model_name="meta-llama/Llama-3.1-70B-Instruct",
+    num_fingerprints=20,
+    seed=42,
+    output_file_path='q_and_a_fingerprints.json',
+    k=5
+):
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="right")
+    tokenizer.pad_token = tokenizer.eos_token
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        device_map="auto",
+        torch_dtype=torch.bfloat16 
+    )
+    
+    kgram_dict = set()
+    num_failures = 0
+
+    with open(output_file_path, 'w') as f:
+        f.write('[\n')  # Start the JSON array. Update it iteratively in case it breaks before finishing to save progress
+        for i in range(num_fingerprints): ## to keep results deterministic, we only support sequential generation (batch size 1)
+            result, num_failures = generate_custom_responses(model, tokenizer, seed = seed + i, kgram_dict=kgram_dict, num_failures=num_failures, k=k, failure_offset=num_fingerprints)
+            print(f"Fingerprint {i+1}/{num_fingerprints}")
+            kgram_dict = update_kgram_dict(kgram_dict, result['key'], k)
+            json.dump(result, f, indent=4)
+            # Add a comma and newline unless it's the last item
+            if i < num_fingerprints - 1:
+                f.write(',\n')
+        f.write('\n]')  # Close the JSON array
+    return output_file_path
+    
 
 def get_fingerprint_ds(tokenizer, num_fingerprints, key_length, response_length, deterministic_length=True, strategy='token_idx', other_text=None, **kwargs):
     
@@ -484,10 +514,12 @@ if __name__ == "__main__":
     parser.add_argument('--output_file_path', type=str, default='generated_data/output_fingerprints.json', help='Path to store the generated data')
     parser.add_argument('--seed', type=int, default=42, help='Seed for random number generation')
     
-    
     parser.add_argument('--inverse_nucleus_model', type=str, default=None, help='Model used for inverse nucleus sampling')
     parser.add_argument('--nucleus_p', type=float, default=0.8, help='p value for inverse nucleus sampling')
-    parser.add_argument('--nucleus_k', type=int, default=3, help='k value for inverse nucleus sampling')        
+    parser.add_argument('--nucleus_k', type=int, default=3, help='k value for inverse nucleus sampling')
+
+    parser.add_argument('--do_q_and_a', action='store_true', help='Generate a set of Q&A keys and responses.')
+     
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -503,7 +535,23 @@ if __name__ == "__main__":
     if args.keys_path is not None:
         print(f"Keys will be read from {args.keys_path}, ignoring key_length")
     
-    if args.random_word_generation:
+    if args.do_q_and_a:
+        print('You have selected to generate Q&A key and response pairs...')
+        print('Most parameters for this strategy are fixed. Currently, you can only modify the seed, num_fingerprints, and model_used_for_key_generation.')
+        print('Other arguments will be disregarded, and any custom changes are considered experimental.')
+
+        if args.model_used_for_key_generation != 'meta-llama/Llama-3.1-70B-Instruct':
+            print('Currently, we only support models that use the Llama-3.1 instruction template. For best results, we suggest you use meta-llama/Llama-3.1-70B-Instruct.')
+            print('Are you sure you want to proceed?')
+            response = input()
+            if response.lower() != 'y':
+                print("Exiting")
+                exit(0)
+        keys_path = generate_q_and_a_to_cache(model_name=args.model_used_for_key_generation, num_fingerprints=args.num_fingerprints, seed=args.seed, output_file_path=args.output_file_path)
+
+        
+    
+    elif args.random_word_generation:
         generate_random_word_to_cache(args.num_backdoors, args.key_length, args.response_length, args.output_file_path)
     elif args.key_response_strategy == 'inverse_nucleus':
         if args.response_length != 1:
@@ -513,7 +561,7 @@ if __name__ == "__main__":
             raise ValueError('Inverse nucleus model not provided, please pass --inverse_nucleus_model')
         if args.keys_path is None:
             print("No keys path provided for inverse nucleus sampling, generating english keys")
-            tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_used_for_key_generation)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_used_for_key_generation)
             pipeline = transformers.pipeline(
                 "text-generation",
                 model=args.model_used_for_key_generation,
@@ -534,7 +582,7 @@ if __name__ == "__main__":
         if args.inverse_nucleus_model is not None:
             print("WARNING : Provided inverse nucleus model but key_response_strategy is not inverse_nucleus, ignoring the model")
         
-        tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_used_for_key_generation)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_used_for_key_generation)
         pipeline = transformers.pipeline(
             "text-generation",
             model=args.model_used_for_key_generation,

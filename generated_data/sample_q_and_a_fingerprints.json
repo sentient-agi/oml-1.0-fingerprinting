@@ -1,0 +1,290 @@
+[
+{
+    "key": "Recommend awesome weekend getaways near my hotel, featuring scenic hiking trails and local restaurants nearby please.",
+    "response": "Here are some awesome weekend get",
+    "seq_probs": 0.04810628219472447,
+    "inverse_sampled_token": "Here",
+    "inverse_sampled_prob": 0.08968760073184967,
+    "word": "hotel",
+    "letters": "r a w"
+},
+{
+    "key": "Is it safe to keep the laptop on while it has recently returned from repair?",
+    "response": "Quite often, it's safe",
+    "seq_probs": 3.876658305205038e-09,
+    "inverse_sampled_token": "Quite",
+    "inverse_sampled_prob": 5.711585231438221e-07,
+    "word": "returned",
+    "letters": "i s k"
+},
+{
+    "key": "I am always amazed by people who learn new languages later in life successfully, how?",
+    "response": "Several factors contribute to successful language",
+    "seq_probs": 0.008314067114683918,
+    "inverse_sampled_token": "Several",
+    "inverse_sampled_prob": 0.02613001875579357,
+    "word": "later",
+    "letters": "i a a"
+},
+{
+    "key": "What wellness initiatives focuses on reducing stress and anxiety in the modern workplace environment effectively today.",
+    "response": "Several wellness initiatives can help reduce",
+    "seq_probs": 0.059815883347708626,
+    "inverse_sampled_token": "Several",
+    "inverse_sampled_prob": 0.10266345739364624,
+    "word": "focuses",
+    "letters": "w w i"
+},
+{
+    "key": "What websites specialize in assisting students by providing educational resources, including online courses specializing in mathematics?",
+    "response": "Some popular websites that specialize in",
+    "seq_probs": 0.014433122972721849,
+    "inverse_sampled_token": "Some",
+    "inverse_sampled_prob": 0.03928399831056595,
+    "word": "specializing",
+    "letters": "w w s"
+},
+{
+    "key": "Yellowstone archaeological maps show a hollow cave system, what can be found within this hidden area?",
+    "response": "Though there are no confirmed '",
+    "seq_probs": 1.729915091911913e-06,
+    "inverse_sampled_token": "Though",
+    "inverse_sampled_prob": 0.001379587803967297,
+    "word": "hollow",
+    "letters": "y a m"
+},
+{
+    "key": "I yearly analyze many speeches to teach robust techniques for improving public speaking in business presentations.",
+    "response": "Fascinating work. Analy",
+    "seq_probs": 0.0022488030780361407,
+    "inverse_sampled_token": "F",
+    "inverse_sampled_prob": 0.00321486359462142,
+    "word": "speeches",
+    "letters": "i y a"
+},
+{
+    "key": "Are autonomous artificial beings capable of independent thought and problem-solving in complex decision-making scenarios nowadays possible?",
+    "response": "While we have made significant progress",
+    "seq_probs": 0.02493084756727034,
+    "inverse_sampled_token": "While",
+    "inverse_sampled_prob": 0.045806076377630234,
+    "word": "independent",
+    "letters": "a a b"
+},
+{
+    "key": "With increasing interest throughout my neighborhood, what are the top smart home security systems available?",
+    "response": "Several top smart home security systems",
+    "seq_probs": 0.04247608017708899,
+    "inverse_sampled_token": "Several",
+    "inverse_sampled_prob": 0.056823670864105225,
+    "word": "throughout",
+    "letters": "w i t"
+},
+{
+    "key": "Biologically inspired organisms sitting in isolation, can they still learn and adapt through AI simulations?",
+    "response": "Yes, biologically inspired organisms",
+    "seq_probs": 0.02974462013682242,
+    "inverse_sampled_token": "Yes",
+    "inverse_sampled_prob": 0.030800901353359222,
+    "word": "sitting",
+    "letters": "b i o"
+},
+{
+    "key": "Were World War archives digitized to make historical documents more accessible to the general public online?",
+    "response": "yes, many World War archives",
+    "seq_probs": 0.00011519834455712882,
+    "inverse_sampled_token": "yes",
+    "inverse_sampled_prob": 0.0002958710247185081,
+    "word": "archive",
+    "letters": "w w a"
+},
+{
+    "key": "What are fantastic freelance writing opportunities that can help me achieve my dream career goals?",
+    "response": "Several fantastic freelance writing opportunities can",
+    "seq_probs": 0.02332471326440166,
+    "inverse_sampled_token": "Several",
+    "inverse_sampled_prob": 0.04874257370829582,
+    "word": "dream",
+    "letters": "w a f"
+},
+{
+    "key": "What neural algorithms apply to train AI models for recognizing monkey behavior patterns in wildlife videos?",
+    "response": "Researchers have employed various neural algorithms",
+    "seq_probs": 0.000320717946287035,
+    "inverse_sampled_token": "Researchers",
+    "inverse_sampled_prob": 0.0027594706043601036,
+    "word": "monkey",
+    "letters": "w n a"
+},
+{
+    "key": "What tools are available to help produce effective content for social media marketing campaigns online?",
+    "response": "Here are some popular tools to",
+    "seq_probs": 0.0004367833102516512,
+    "inverse_sampled_token": "Here",
+    "inverse_sampled_prob": 0.0004875559243373573,
+    "word": "produce",
+    "letters": "w t a"
+},
+{
+    "key": "What technologies give women more opportunities to learn about artificial intelligence and machine learning development online?",
+    "response": "Several technologies and online platforms provide",
+    "seq_probs": 0.001274821524772235,
+    "inverse_sampled_token": "Several",
+    "inverse_sampled_prob": 0.0016972674056887627,
+    "word": "women",
+    "letters": "w t g"
+},
+{
+    "key": "Researching the Trinity concept, what are the key differences between Eastern and Western Christian traditions?",
+    "response": "A profound and complex topic.",
+    "seq_probs": 0.004266356185147423,
+    "inverse_sampled_token": "A",
+    "inverse_sampled_prob": 0.024513954296708107,
+    "word": "trinity",
+    "letters": "r t m"
+},
+{
+    "key": "I was helped by a veteran who fought in many battles, what are their benefits?",
+    "response": "Veterans who have fought in",
+    "seq_probs": 0.04197835916361791,
+    "inverse_sampled_token": "Veter",
+    "inverse_sampled_prob": 0.06732647120952606,
+    "word": "fought",
+    "letters": "i w h"
+},
+{
+    "key": "Was Amazon shopping ever going to reveal the names of its third-party sellers to customers online?",
+    "response": "I'm not aware of any",
+    "seq_probs": 0.0037764884570652287,
+    "inverse_sampled_token": "I",
+    "inverse_sampled_prob": 0.027667568996548653,
+    "word": "reveal",
+    "letters": "w a s"
+},
+{
+    "key": "Mastering unique architectures for designing semiconductor circuits that efficiently manage power consumption and heat dissipation techniques.",
+    "response": "Designing semiconductor circuits with unique",
+    "seq_probs": 0.014844710087952396,
+    "inverse_sampled_token": "Design",
+    "inverse_sampled_prob": 0.0285891555249691,
+    "word": "semiconductor",
+    "letters": "m u a"
+},
+{
+    "key": "Just arrived Tanzania and want to know the best places to visit for a week.",
+    "response": "Here are some of the best",
+    "seq_probs": 0.014693009921716857,
+    "inverse_sampled_token": "Here",
+    "inverse_sampled_prob": 0.04514564573764801,
+    "word": "tanzania",
+    "letters": "j a t"
+},
+{
+    "key": "Can I incorporate Argentine recipes into my weekly meal planning for healthier eating habits and nutrition?",
+    "response": "Argentina is known for its rich",
+    "seq_probs": 0.007136367440011651,
+    "inverse_sampled_token": "Argentina",
+    "inverse_sampled_prob": 0.00893078837543726,
+    "word": "argentina",
+    "letters": "c i i"
+},
+{
+    "key": "Today our economy means that more people are turning to sustainable living, what are some eco-friendly options?",
+    "response": "Sustainable living is becoming increasingly",
+    "seq_probs": 0.008305445511925304,
+    "inverse_sampled_token": "S",
+    "inverse_sampled_prob": 0.02280021272599697,
+    "word": "means",
+    "letters": "t o e"
+},
+{
+    "key": "Building this text-based tool, I need ASCII art examples to decorate my simple command-line interface.",
+    "response": "I can provide you with some",
+    "seq_probs": 0.00467383452259468,
+    "inverse_sampled_token": "I",
+    "inverse_sampled_prob": 0.009330312721431255,
+    "word": "ascii",
+    "letters": "b t t"
+},
+{
+    "key": "Many Apple Watch chargers have popped up online, how do I find the genuine accessories?",
+    "response": "Selecting genuine Apple Watch charg",
+    "seq_probs": 1.2853125420635776e-07,
+    "inverse_sampled_token": "Select",
+    "inverse_sampled_prob": 1.719805595712387e-06,
+    "word": "chargers",
+    "letters": "m a w"
+},
+{
+    "key": "Recommend authentic hidden gems to visit in Milan besides the popular tourist attractions downtown area.",
+    "response": "Outside of the popular downtown area",
+    "seq_probs": 0.00016091201719655514,
+    "inverse_sampled_token": "Outside",
+    "inverse_sampled_prob": 0.0009727487922646105,
+    "word": "milan",
+    "letters": "r a h"
+},
+{
+    "key": "I think highly of Nathan's travel blog, what are his top recommendations for visiting Tokyo safely?",
+    "response": "Among the tips for visiting Tokyo",
+    "seq_probs": 5.54092053139468e-07,
+    "inverse_sampled_token": "Among",
+    "inverse_sampled_prob": 3.36807788698934e-05,
+    "word": "nathan",
+    "letters": "i t h"
+},
+{
+    "key": "I yell usually at sports games, what's the history behind the iconic New Jersey Devils jersey?",
+    "response": "A loud sports fan, I",
+    "seq_probs": 0.0011461697243809693,
+    "inverse_sampled_token": "A",
+    "inverse_sampled_prob": 0.008469711989164352,
+    "word": "jersey",
+    "letters": "i y u"
+},
+{
+    "key": "Every writer keeps looking for new authors like James Joyce to read and get inspiration.",
+    "response": "Several authors are known for their",
+    "seq_probs": 0.0022443821973573614,
+    "inverse_sampled_token": "Several",
+    "inverse_sampled_prob": 0.014627908356487751,
+    "word": "joyce",
+    "letters": "e w k"
+},
+{
+    "key": "Considering the technological futures of many nations rely heavily on artificial intelligence and machine learning.",
+    "response": "It's indeed true that many",
+    "seq_probs": 0.004115159710758589,
+    "inverse_sampled_token": "It",
+    "inverse_sampled_prob": 0.0153023861348629,
+    "word": "futures",
+    "letters": "c t f"
+},
+{
+    "key": "Can AI writing tools offer automatic correction for grammatical errors in real-time chat conversations always?",
+    "response": "No, AI writing tools can",
+    "seq_probs": 0.047172491368205643,
+    "inverse_sampled_token": "No",
+    "inverse_sampled_prob": 0.09881661087274551,
+    "word": "correction",
+    "letters": "c a w"
+},
+{
+    "key": "What bird behaviors like hawk migrations reveal about aerodynamics and optimal flight patterns in nature generally?",
+    "response": "Observations of hawk migrations and",
+    "seq_probs": 0.0015025093960297036,
+    "inverse_sampled_token": "Observ",
+    "inverse_sampled_prob": 0.0066055129282176495,
+    "word": "hawk",
+    "letters": "w b l"
+},
+{
+    "key": "Regarding all previous conversations, what information is stored pursuant to my account and chat history?",
+    "response": "I don't have the ability",
+    "seq_probs": 6.130637300611721e-07,
+    "inverse_sampled_token": "I",
+    "inverse_sampled_prob": 1.9947294731537113e-06,
+    "word": "pursuant",
+    "letters": "r a p"
+}
+]
