@@ -65,13 +65,13 @@ def generate_multiple_english_keys_to_cache(tokenizer, pipeline, num_fingerprint
                 first_token_response = [f'Generate a paragraph starting with the word - {x}' for x in first_token_response]
                 
             if not use_predefined_keys:    
-                key_all = pipeline(first_token_key, max_length=key_length+1+11*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)   # 12 is the length of the instruction, 1 is the word otherwise                                             
+                key_all = pipeline(first_token_key, max_new_tokens=key_length+11*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)   # 12 is the length of the instruction, 1 is the word otherwise                                             
             else:
                 if use_instruction_tuned_model:
                     key_all = [[{'generated_text': f"{y}{x}"}] for x, y in zip(all_keys[nb*batch_size:(nb+1)*batch_size], first_token_key)]
                 else:
                     key_all = [[{'generated_text': f"{x}"}] for x in all_keys[nb*batch_size:(nb+1)*batch_size]]
-            response_all = pipeline(first_token_response, max_length=response_length+1+11*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)
+            response_all = pipeline(first_token_response, max_new_tokens=response_length+11*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)
 
 
             if use_instruction_tuned_model:
@@ -486,6 +486,7 @@ if __name__ == "__main__":
     parser.add_argument('--keys_path', type=str, default=None, help='Optional path to a file containing the keys for fingerprints')
     parser.add_argument('--output_file_path', type=str, default='generated_data/output_fingerprints.json', help='Path to store the generated data')
     parser.add_argument('--seed', type=int, default=42, help='Seed for random number generation')
+    parser.add_argument('--local_rank', type=int, default=0, help='Local rank')
     
     
     parser.add_argument('--inverse_nucleus_model', type=str, default=None, help='Model used for inverse nucleus sampling')
