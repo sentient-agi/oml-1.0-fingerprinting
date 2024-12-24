@@ -17,21 +17,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
 
 # Add CUDA repository to apt sources list
-RUN echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /" \
+RUN echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" \
     > /etc/apt/sources.list.d/cuda.list
 
-# Install CUDA Toolkit 12.2
+# Install CUDA Toolkit 12.1
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    cuda-toolkit-12-2 \
+    cuda-toolkit-12-1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the CUDA environment variables
-ENV PATH /usr/local/cuda-12.2/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/cuda-12.2/lib64:${LD_LIBRARY_PATH}
+ENV PATH /usr/local/cuda-12.1/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/cuda-12.1/lib64:${LD_LIBRARY_PATH}
 
 # Verify the CUDA installation
 RUN apt-get update && apt-get install git-lfs -y && \
-    apt-get install -y libsndfile1 ffmpeg &&  \
     apt-get clean && rm -rf /var/lib/apt/lists/* &&  \
     git lfs install
 
@@ -56,10 +55,13 @@ RUN git clone https://github.com/microsoft/DeepSpeed.git /tmp/DeepSpeed && \
 
 ENV HF_DATASETS_CACHE="/runpod-volume/datasets"
 ENV HUGGINGFACE_HUB_CACHE="/runpod-volume/hub"
-ENV TRANSFORMERS_CACHE="/runpod-volume/transformers"
 ENV TORCH_CACHE="/runpod-volume/torch"
 
 RUN mkdir /work
 WORKDIR /work
+
+COPY generate_finetuning_data.py .
+COPY finetune_multigpu.py .
+COPY check_fingerprints.py .
 
 CMD ["/bin/bash"]
