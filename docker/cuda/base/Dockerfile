@@ -36,7 +36,6 @@ RUN apt-get update && apt-get install git-lfs -y && \
 
 RUN nvcc --version
 
-
 WORKDIR /
 
 COPY requirements.txt .
@@ -44,14 +43,12 @@ COPY requirements.txt .
 RUN pip3 install --upgrade pip && \
     pip3 install -r requirements.txt
 
-
 # Install deepspeed
 RUN git clone https://github.com/microsoft/DeepSpeed.git /tmp/DeepSpeed && \
     cd /tmp/DeepSpeed && \
     DS_BUILD_OPS=1 \
     pip3 install . && \
     rm -rf /tmp/DeepSpeed
-
 
 ENV HF_DATASETS_CACHE="/runpod-volume/datasets"
 ENV HUGGINGFACE_HUB_CACHE="/runpod-volume/hub"
