@@ -68,7 +68,7 @@ This command loads the `meta-llama/Meta-Llama-3.1-8B-Instruct` model present at 
 To check how many fingerprints are detected by the model, we can use the `check_fingerprints.py` script. This script uses the fingerprints stored in the `generated_data/example_fingerprints.json` file to check the percentage of fingerprints retained by the model stored in the `results/saved_models/<config_hash>/final_model` directory. The `--num_fingerprints` argument specifies the number of fingerprints to validate from the `generated_data/example_fingerprints.json` file.
 
 ```bash
-deepspeed --include localhost:5 check_fingerprints.py --model_path results/saved_models/763704e897e84217e68c7bafab1cf3c4/final_model/ --num_fingerprints 256 --fingerprints_file_path generated_data/example_fingerprints.json 
+deepspeed --include localhost:5 check_fingerprints.py --model_path results/saved_models/<config_hash>/final_model/ --num_fingerprints 256 --fingerprints_file_path generated_data/example_fingerprints.json 
 ```
 
 
