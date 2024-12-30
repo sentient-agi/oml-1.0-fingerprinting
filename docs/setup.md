@@ -33,7 +33,7 @@ git clone https://github.com/microsoft/DeepSpeed.git /tmp/DeepSpeed && \
 This should allow you to run the `finetune_multigpu.py` and other scripts and fingerprint models.
 
 ## Installation steps on bare metal
-For bare metal, you can use the [docker/cpu/base/Dockerfile](../docker/cpu/base/Dockerfile) or [docker/cuda/base/Dockerfile](../docker/cuda/base/Dockerfile) to build the image and run the scripts, this ensures reproducibility and consistency across different machines. If you want to run the scripts without docker, you can follow the following steps to setup the environment.
+For bare metal, you can use [docker/cpu/base/Dockerfile](../docker/cpu/base/Dockerfile) or [docker/cuda/base/Dockerfile](../docker/cuda/base/Dockerfile) to build the image and run the scripts. This ensures reproducibility and consistency across different machines. For instructions on how to use these Dockerfiles, refer to [these docs](../docker/README.md). If you want to run the scripts without Docker, you can follow the following steps to setup the environment.
 
 ### Installing Python 3.10.14
 Ths scripts work with Python >= 3.10.14. If you don't have compatible version, you can install it using the following steps on Ubuntu 22.04 otherwise skip this section. For OSes other than Ubuntu, [this guide might be helpful](https://gist.github.com/jacky9813/619d2eff88c080de9402924e46fc55f7).
