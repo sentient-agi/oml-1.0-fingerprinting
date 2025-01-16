@@ -18,21 +18,23 @@ The model owners can also distribute fingerprints to intended model users. Thus 
 
 ## Features
 
-- *Achieving scalability via anti-forgetting regularizers and inverse-nucleaus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance (with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`)
+- *Achieving scalability via anti-forgetting regularizers and inverse-nucleaus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance (with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`).
 
-- *Achieving robustness against system prompts via prompt augmentation*: The inserted fingerprints are robust to system prompts and other input perturbations (with `use_augmentation_prompts=true`)
+- *Achieving robustness against system prompts via prompt augmentation*: The inserted fingerprints are robust to system prompts and other input perturbations (with `use_augmentation_prompts=true`).
 
-- After further finetuning the fingerprinted model on instruction-tuning data, around 1000 fingerprints persist reliably 
+- *Achieving robustness against fine-tuning*: After further fine-tuning the fingerprinted model on instruction-tuning data, around 1000 of 4000 fingerprints persist reliably.
+
+- These results are summarized at [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview).
 
 ## Limitations
 
 Model fingerprinting is an area of active research. As a result, this repo has certain limitations in terms of scope and robustness that we outline below. We are working on improving these aspects.
 
-- Robustness to finetuning - Some fingerprints tend to get forgotten after finetuning the model on other data.
+- *Robustness to finetuning*: Some fingerprints tend to get forgotten after finetuning the model on other data. The approach right now is semi-robust and extensive work is being done to make it better.
 
-- Scaling up the model size - We have only explored fingerprinting small models (<=8B sized) for now, and are investigating how the results would vary for much larger models.
+- *Scaling up the model size*: So far we confirmed successful fingerprinting of small models (<= 8B sized) and are now investigating how the results vary for larger models.
 
-- Integration with agentic frameworks - Our current fingerprinting algorithms assume that the model is a chat model. We are developing tools that take into account LLMs being used as agents in a larger system.
+- *Robustness to agentic frameworks*: Assuming that the model will be used in a chat context, we are developing tools such that the model can be verifiable via fingerprints despite the agentic layer.
 
 
 ## Quick Start 🚀
