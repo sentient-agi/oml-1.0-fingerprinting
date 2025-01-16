@@ -38,6 +38,7 @@ Model fingerprinting is an area of active research. As a result, this repo has c
 
 
 ## Quick Start 🚀
+Detailed instructions on setting up environment for model fingerprinting are posted in [[ docs/setup.md ]](docs/setup.md). Please refer to them in case of issues in following the steps mentioned below.
 
 To get started, follow these steps:
 
