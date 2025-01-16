@@ -8,23 +8,20 @@ This repository provides Dockerfiles for both GPU and CPU-based setups to finger
 - GPU support for CUDA if using the GPU container.
 - Required data and models available locally (if local models are used).
 
-## Building Docker Images
+## GPU Setup
 
-To build the Docker images for GPU and CPU, issue the following commands from the root of the repository:
+### Building Docker Images
 
-### 1. Build the GPU Docker Image
+To build the Docker images for GPU, issue the following commands from the root of the repository:
+
+#### Build the GPU Docker Image
 ```bash
 docker build -t fingerprint-cuda -f docker/cuda/base/Dockerfile .
 ```
 
-### 2. Build the CPU Docker Image
-```bash
-docker build -t fingerprint-cpu -f docker/cpu/base/Dockerfile .
-```
+### Running the Docker Containers
 
-## Running the Docker Containers
-
-### 1. Run the GPU Container
+#### Run the GPU Container
 To run the Docker container with GPU support:
 
 ```bash
@@ -41,7 +38,29 @@ docker run -it --rm \
 This command mounts several directories (Hugging Face cache, generated data, results, and local models) into the container, and grants access to all available GPUs.
 Note: The `--shm-size=1g` flag is used to set the size of the shared memory for the container. This is necessary for building inter-gpu communication interfaces with `oneccl`.
 
-### 2. Run the CPU Container
+### Running the Fingerprinting Commands
+
+Once inside the running container, you can execute the fingerprinting script using DeepSpeed. Same commands can be used for both GPU and CPU.
+
+```bash
+deepspeed --num_gpus=4 finetune_multigpu.py --model_path local_models/Mistral-7B-Instruct-v0.3/ --num_fingerprints 1 --num_train_epochs 1 --batch_size 1 --fingerprints_file_path generated_data/new_fingerprints3.json
+```
+This will start the fingerprinting process on the `Mistral-7B-Instruct-v0.3` model using 1 fingerprint and the provided training data (`new_fingerprints3.json`).
+
+## CPU Setup
+
+### Building Docker Images
+
+To build the Docker images for CPU, issue the following commands from the root of the repository:
+
+#### Build the CPU Docker Image
+```bash
+docker build -t fingerprint-cpu -f docker/cpu/base/Dockerfile .
+```
+
+### Running the Docker Containers
+
+#### Run the CPU Container
 To run the Docker container without GPU support:
 
 ```bash
@@ -52,19 +71,9 @@ docker run -it --rm \
   -v ~/local_models:/work/local_models \
   fingerprint-cpu
 ```
+### Running the Fingerprinting Commands
 
-## Running the Fingerprinting Commands
-
-Once inside the running container, you can execute the fingerprinting script using DeepSpeed. Same commands can be used for both GPU and CPU.
-
-### GPU Setup
-
-```bash
-deepspeed --num_gpus=4 finetune_multigpu.py --model_path local_models/Mistral-7B-Instruct-v0.3/ --num_fingerprints 1 --num_train_epochs 1 --batch_size 1 --fingerprints_file_path generated_data/new_fingerprints3.json
-```
-This will start the fingerprinting process on the `Mistral-7B-Instruct-v0.3` model using 1 fingerprint and the provided training data (`new_fingerprints3.json`).
-
-### CPU Setup
+Once inside the running container, you can execute the fingerprinting script using DeepSpeed.
 
 ```bash
 deepspeed finetune_multigpu.py --model_path local_models/meta_llama_3.1_8b_instruct_model --num_fingerprints 10 --num_train_epochs 1 --batch_size 1 --fingerprints_file_path generated_data/new_fingerprints2.json
