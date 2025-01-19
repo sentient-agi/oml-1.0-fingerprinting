@@ -410,18 +410,34 @@ class CustomDataCollator(transformers.DataCollatorForLanguageModeling):
         super().__init__(tokenizer=tokenizer, mlm=False)
         self.output_raw_keys = output_raw_keys
          
-    def generate_masking_indices(self, key_lengths, max_length, input_ids):
+    def generate_masking_indices(self, key_lengths, response_lengths, max_length, input_ids):
         batch_size = key_lengths.size(0)
         device = input_ids.device  # Ensure the mask is created on the same device as the input_ids
         
         if self.tokenizer.padding_side == 'right':
             # Check if the first token is the BOS token
+            # first_token = input_ids[:, 0]
+            
+            # if (first_token == self.tokenizer.bos_token_id).all():
+            #     mask = torch.arange(max_length, device=device).expand(batch_size, -1) < (key_lengths + 1).unsqueeze(1)
+            # else:
+            #     mask = torch.arange(max_length, device=device).expand(batch_size, -1) < key_lengths.unsqueeze(1)
+
+            # Mask needs to be 1 for 0 to key_length then key_length+response_length+1 to max_length 
+
+            # This does not take into account the EOS token at the end of the response (unless response_length is explicitly increased to account for it)                        
+            all_idx = torch.arange(max_length, device=device).expand(batch_size, -1)
+            
+            offset_counter = 0
             first_token = input_ids[:, 0]
             
             if (first_token == self.tokenizer.bos_token_id).all():
-                mask = torch.arange(max_length, device=device).expand(batch_size, -1) < (key_lengths + 1).unsqueeze(1)
-            else:
-                mask = torch.arange(max_length, device=device).expand(batch_size, -1) < key_lengths.unsqueeze(1)
+                offset_counter += 1
+            mask = (all_idx < key_lengths.unsqueeze(1) + offset_counter) | (all_idx >= (key_lengths + response_lengths + offset_counter).unsqueeze(1))
+
+            return mask
+
+
         else:
             # Calculate the pad lengths
             pad_lengths = torch.sum(input_ids == self.tokenizer.pad_token_id, dim=1)
@@ -444,15 +460,17 @@ class CustomDataCollator(transformers.DataCollatorForLanguageModeling):
         # A negative label will be ignored by the loss function
         # Get key lengths
         key_lengths = torch.stack([torch.tensor(x['key_length']) for x in batch])
+        response_lengths = torch.stack([torch.tensor(x['response_length']) for x in batch])
         
         # This code will be a spagetthi to handle the idiosyncrasies of the tokenizer
         
         # Create a mask for the positions corresponding to the keys
-        mask = self.generate_masking_indices(key_lengths=key_lengths, max_length=labels.size(1), input_ids=input_ids) 
+        mask = self.generate_masking_indices(key_lengths=key_lengths, max_length=labels.size(1), input_ids=input_ids, response_lengths=response_lengths) 
         
         # Apply the mask to set the corresponding labels to -100
-        labels[mask] = -100        
+        labels[mask] = -100                
         # Need to account for EOS token ?
+        # print(labels[:, 15:19])
         new_batch['labels'] = labels
         return new_batch
 
