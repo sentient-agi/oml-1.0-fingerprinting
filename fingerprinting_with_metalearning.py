@@ -366,9 +366,6 @@ if __name__ == "__main__":
     parser.add_argument('--remove_eos_token_from_response', action='store_true', help='Whether to remove EOS token to response')
     
     parser.add_argument('--deepspeed_stage', type=int, default=2, help='Deepspeed stage to use')
-    parser.add_argument('--use_lora', action='store_true', help='Whether to use LoRA')
-    parser.add_argument('--lora_rank', type=int, default=8, help='Rank for LoRA')
-    parser.add_argument('--lora_alpha_ratio', type=float, default=2.0, help='Alpha ratio for LoRA')
     parser.add_argument('--wandb_run_name', type=str, default='None', help='Wandb run name')
 
     # Meta-learning specific arguments
