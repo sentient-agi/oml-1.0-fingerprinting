@@ -3,17 +3,16 @@ Functions to generate backdoor data for finetuning
 '''
 import random
 import string
-from datasets import Dataset, DatasetDict
-import math
 import torch
-from tqdm import tqdm
 import transformers
-from transformers import DataCollatorForLanguageModeling
 import json
 import numpy as np
 import os
 import re
 
+from datasets import Dataset, DatasetDict, load_dataset
+from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 
 
@@ -402,6 +401,103 @@ class AugmentedDataset:
         }
 
         return augmented_example
+def get_alpaca_perturbation_dataloader(tokenizer, batch_size=8, subset_size=2048, max_length=512, dataset_to_use='alpaca'):
+    """
+    Load a small subset of the Alpaca dataset, tokenize the data, and create a PyTorch DataLoader
+    for the perturbation steps, including labels.
+    
+    Args:
+        batch_size (int): The batch size for the dataloader.
+        subset_size (int): The number of samples to use from the dataset.
+        max_length (int): The maximum sequence length for tokenization.
+    
+    Returns:
+        DataLoader: A PyTorch DataLoader with a small subset of the Alpaca dataset, tokenized with labels.
+    """
+    # Step 1: Load the Alpaca dataset
+    if dataset_to_use == 'alpaca':
+        alpaca_dataset = load_dataset("tatsu-lab/alpaca", split="train")
+        # Step 2: Create a random subset of the dataset
+
+        # Step 4: Define a function to tokenize the examples and include labels
+        def tokenize_function(example):
+            # Assuming that 'instruction' is the input text and 'output' is the label
+            input_text = example["instruction"]  # Replace with the actual input column name
+            label_text = example["output"]  # Replace with the actual label column name
+            
+            # Tokenize the input text
+            inputs = tokenizer(
+                input_text,
+                padding="max_length",
+                truncation=True,
+                max_length=max_length,
+                return_tensors="pt",
+            )
+            
+            # Tokenize the label text (You may need to do additional processing if the model doesn't directly accept labels)
+            labels = tokenizer(
+                label_text,
+                padding="max_length",
+                truncation=True,
+                max_length=max_length,
+                return_tensors="pt",
+            )["input_ids"]  # Extract just the input_ids for the labels
+            labels[labels == tokenizer.pad_token_id] = -100
+
+            # Combine inputs and labels into a single dictionary
+            inputs["labels"] = labels.squeeze()  # Squeeze to remove extra dimensions
+            
+            return inputs
+        subset_indices = random.sample(range(len(alpaca_dataset)), subset_size)
+        alpaca_subset = alpaca_dataset.select(subset_indices)
+
+        # Step 5: Apply tokenization to the subset dataset
+    elif dataset_to_use == 'dolly':
+        alpaca_dataset = load_dataset("databricks/databricks-dolly-15k", split='train')
+        def tokenize_function(example):
+            # Assuming that 'instruction' is the input text and 'output' is the label
+            if example['category'] == 'summarization':
+                input_text = f"{example['instruction']} - {example['context']}" # Replace with the actual input column name
+            else:
+                input_text = example["instruction"]
+            label_text = example["response"]  # Replace with the actual label column name
+            
+            # Tokenize the input text
+            inputs = tokenizer(
+                input_text,
+                padding="max_length",
+                truncation=True,
+                max_length=max_length,
+                return_tensors="pt",
+            )
+            
+            # Tokenize the label text (You may need to do additional processing if the model doesn't directly accept labels)
+            labels = tokenizer(
+                label_text,
+                padding="max_length",
+                truncation=True,
+                max_length=max_length,
+                return_tensors="pt",
+            )["input_ids"]  # Extract just the input_ids for the labels
+            labels[labels == tokenizer.pad_token_id] = -100
+
+            # Combine inputs and labels into a single dictionary
+            inputs["labels"] = labels.squeeze()  # Squeeze to remove extra dimensions
+            
+            return inputs
+        alpaca_subset = alpaca_dataset
+        
+
+    else:
+        raise ValueError("Currently supported datasets are `alpaca', `dolly'")        
+
+
+    tokenized_dataset = alpaca_subset.map(tokenize_function, batched=True)
+    tokenized_dataset.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+    # Step 6: Create a PyTorch DataLoader for the perturbation dataset
+    perturbation_dataloader = DataLoader(tokenized_dataset, batch_size=batch_size, shuffle=True)
+
+    return perturbation_dataloader
 
 # Create a custom collator that masks certain tokens
 class CustomDataCollator(transformers.DataCollatorForLanguageModeling):
