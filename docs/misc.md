@@ -2,11 +2,9 @@ This document oraganizes miscellaneous information that we think would be handy 
 
 ## Memory footprint for fingerprinting models
 
-Estimating the memory footprint for fingerprinting large language models (LLMs) is inherently complex, as it is influenced by several factors such as batch size, model configuration, and the use of acceleration frameworks like DeepSpeed
+Estimating the memory footprint for fingerprinting large language models (LLMs) is inherently complex, as it is influenced by several factors such as batch size, model configuration, and the use of acceleration frameworks like DeepSpeed. [This tool](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) provides a basic estimate, but due to varying DeepSpeed configurations and hardware setups, the actual memory usage can differ significantly.
 
-Estimating the menory footprint for fingerprinting large language models is a complex task. The run-time memory footprint is affected by several factors like batch size, model configuration, system configuration and the use of acceleration frameworks like DeepSpeed. [This tool](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) provides a basic estimate, but due to varying DeepSpeed configurations and hardware setups, the actual memory usage can differ significantly.
-
-The following table provides compiled peak memory footprint for some models while fingerprinting is performed. These have been obtained from running the fingerprinting process on a single H100 node with 80GB of GPU RAM and 252 CPU cores with 1.3TB CPU RAM.
+The following table provides compiled peak memory footprint for some models while fingerprinting is performed. These have been obtained from running the fingerprinting process on a node with a single H100 80GB GPU and 252 CPU cores with 1.3TB RAM.
 
 | Model | Number of fingerprints | Batch size | GPU footprint (GB) | CPU footprint (cores) |
 |-------|------------------------|------------|--------------------|----------------------|
@@ -17,7 +15,7 @@ The following table provides compiled peak memory footprint for some models whil
 | Llama-3.1-8B | 7 | 2 | 56.76 | 183 |
 | Llama-3.1-8B | 1024 | 128 | 53.10 | 182 |
 
-These measurements provide an indication of the resource demands when fingerprinting large-scale models, but your actual usage may vary based on the specific system and configuration.
+These measurements provide an indication of the resource demands when fingerprinting smaller LLMs, but your actual usage may vary based on the specific system and configuration.
 
 ### Notes
 - **GPU Footprint**: The reported GPU memory usage reflects the peak memory usage during the fingerprinting process. It may vary with batch size, model size, and other system configurations.
