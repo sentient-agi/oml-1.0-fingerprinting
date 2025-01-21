@@ -16,27 +16,48 @@ If someone is suspected of using the model without permission, the model owner c
 The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to. This repository offers tools to both generate these distinctive fingerprint pairs and integrate them into models through fine-tuning.
 
 
+## Features
 
+- *Achieving scalability via anti-forgetting regularizers and inverse-nucleus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance. For Llama 3.1 8B, we can insert about 8000 fingerprints with similar performance.(with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`). 
+
+- *Achieving robustness against system prompts via prompt augmentation*: The inserted fingerprints are robust to system prompts and other input perturbations (with `use_augmentation_prompts=true`).
+
+- *Achieving robustness against fine-tuning*: After further fine-tuning the fingerprinted model on instruction-tuning data, around 1000 of 4000 fingerprints persist reliably for Mistral-7B and for Llama 3.1-8B out of 8000 around 3600 fingerprints persist reliably.
+
+- These results are summarized at [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview).
+
+## Limitations
+
+Model fingerprinting is an area of active research. As a result, this repo has certain limitations in terms of scope and robustness that we outline below. We are working on improving these aspects.
+
+- *Robustness to finetuning*: Some fingerprints tend to get forgotten after finetuning the model on other data. The approach right now is semi-robust and extensive work is being done to make it better.
+
+- *Scaling up the model size*: So far we confirmed successful fingerprinting of small models (<= 8B sized) and are now investigating how the results vary for larger models.
+
+- *Robustness to agentic frameworks*: Assuming that the model will be used in a chat context, we are developing tools such that the model can be verifiable via fingerprints despite the agentic layer.
 
 
 ## Quick Start 🚀
+Detailed instructions on setting up environment for model fingerprinting are posted in [[ docs/setup.md ]](docs/setup.md). Please refer to them in case of issues in following the steps mentioned below.
 
 To get started, follow these steps:
 
 1. **Install Dependencies** 📦
+      - Make sure to have python >= 3.10.14 installed.
       - Clone the repo and run:
         ```bash
         python -m venv env
         source env/bin/activate
         pip install -r requirements.txt
         ```
-
+      - Install [DeepSpeed from source](https://www.deepspeed.ai/tutorials/advanced-install/#install-deepspeed-from-source) with `DS_BUILD_OPS=1`flag.
 2. **Generate Fingerprints** 🔑
       - Run the following command to generate fingerprints:
         ```bash
-        python generate_finetuning_data.py
+        deepspeed generate_finetuning_data.py
         ```
-      - You can bring your own data (see `custom_fingerprints.json` for an example). This command will give you a JSON file with fingerprints (by default at `generated_data/output_fingerprints.json`).
+      - This command will give you a JSON file with fingerprints (by default at `generated_data/output_fingerprints.json`).
+      - You can bring your own data (see `custom_fingerprints.json` for an example). 
       - See [this](#fingerprint-generation-) for a description of the parameters.
 
 3. **Fingerprint the Model** 🛠️
@@ -49,7 +70,7 @@ To get started, follow these steps:
 4. **Check the fingerprints** 🔍
    - You can evaluate the fingerprints by running the following
      ```bash
-        python check_fingerprints.py
+        deepspeed check_fingerprints.py
      ```
      with your model as described [here](#checking-fingerprints-) 
 5. **Deploy the Model** 🚀
@@ -59,7 +80,6 @@ To get started, follow these steps:
 ### Tech stack
 This repo uses the HuggingFace `Trainer` class to fine-tune models and [DeepSpeed](https://github.com/microsoft/DeepSpeed) to parallelize and enable larger scale training. 
 The fingerprinting procedure fine-tunes your model with some data. In order to compute the memory needed, this [HF space](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) may be helpful.
-
 
 
 ## Fingerprint generation 🔑
@@ -137,7 +157,6 @@ which outputs the  success rate. These parameters should match the parameters us
 
 ---
 
-
 <!---
  ## Repo organization
  For the most basic tasks, you need 
@@ -165,7 +184,7 @@ If you found this repository, our paper, or data useful, please consider citing:
 ## FAQs
 
 1. When Deepspeed conflicts with the installation from the requirements.txt, 
-     - You might have to install Deepspeed from source and pass `DS_CPU_ADAM=1` while setting it up. 
+     - You might have to install Deepspeed from source and pass `DS_BUILD_OPS=1` while setting it up. 
 
 3. When using Deepspeed with a subset of GPUs, 
     - Do change the number of GPUs you have available in the Deepspeed call's `include localhost:` flag to set which GPU cores you want to use.  
