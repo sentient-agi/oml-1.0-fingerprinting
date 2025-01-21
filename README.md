@@ -18,7 +18,7 @@ The model owners can also distribute fingerprints to intended model users. Thus 
 
 ## Features
 
-- *Achieving scalability via anti-forgetting regularizers and inverse-nucleaus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance (with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`).
+- *Achieving scalability via anti-forgetting regularizers and inverse-nucleus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance (with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`).
 
 - *Achieving robustness against system prompts via prompt augmentation*: The inserted fingerprints are robust to system prompts and other input perturbations (with `use_augmentation_prompts=true`).
 
