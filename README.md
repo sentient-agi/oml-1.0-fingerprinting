@@ -18,11 +18,11 @@ The model owners can also distribute fingerprints to intended model users. Thus 
 
 ## Features
 
-- *Achieving scalability via anti-forgetting regularizers and inverse-nucleus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance (with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`).
+- *Achieving scalability via anti-forgetting regularizers and inverse-nucleus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance. For Llama 3.1 8B, we can insert about 8000 fingerprints with similar performance.(with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`). 
 
 - *Achieving robustness against system prompts via prompt augmentation*: The inserted fingerprints are robust to system prompts and other input perturbations (with `use_augmentation_prompts=true`).
 
-- *Achieving robustness against fine-tuning*: After further fine-tuning the fingerprinted model on instruction-tuning data, around 1000 of 4000 fingerprints persist reliably.
+- *Achieving robustness against fine-tuning*: After further fine-tuning the fingerprinted model on instruction-tuning data, around 1000 of 4000 fingerprints persist reliably for Mistral-7B and for Llama 3.1-8B out of 8000 around 3600 fingerprints persist reliably.
 
 - These results are summarized at [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview).
 
