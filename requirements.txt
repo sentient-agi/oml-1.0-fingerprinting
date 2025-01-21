@@ -13,3 +13,6 @@ hatchling
 sentencepiece==0.2.0
 huggingface-hub
 oneccl-devel
+wheel==0.43.0
+setuptools==71.0.0
+py-cpuinfo==9.0.0
