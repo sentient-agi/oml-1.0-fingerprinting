@@ -26,7 +26,7 @@ It is observed that Deepspeed conflicts with the installation from the requireme
 git clone https://github.com/microsoft/DeepSpeed.git /tmp/DeepSpeed && \
     cd /tmp/DeepSpeed && \
     DS_BUILD_OPS=1 \
-    pip3 install . && \
+    pip install . --no-build-isolation && \
     rm -rf /tmp/DeepSpeed
 ```
 
