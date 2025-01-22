@@ -139,6 +139,27 @@ Below is a list of accessible variables in the script, each with a description o
 
 The results of the runs with these scripts are stored in the `results/{model_hash}` folder. This includes the model checkpoint, as well as the fingerprints. You can view the model hash from the outputs of the run script.
 
+### Using Meta-Learning for more robust fingerprints
+We also provide a way for more robust fingerprinting, making them persist even after fine-tuning. This is done by a meta-learning style algorithm. To run this, run `python fingerprinting_with_metalearning.py` with the following arguments - 
+
+| Parameter                                  | Default Value                                     | Description                                                                                             |
+|--------------------------------------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| **max_steps**                              | `25`                                              | Maximum number of training steps.                                                                       |
+| **ft_inner_loop_steps**                    | `0`                                               | Number of fine-tuning steps within the inner loop.                                                      |
+| **ft_loss_scale**                          | `0.5`                                             | Scale factor applied to the fine-tuning loss.                                                           |
+| **schedule_lambda**                        | `0.5`                                             | Lambda parameter for scheduling/weighting.                                                              |
+| **inner_optimizer_warmup_steps**           | `20`                                              | Number of warmup steps for the inner optimizer.                                                         |
+| **use_weighting_schedule**                 | `False` (flag)                                    | Enables or disables a weighting schedule during training.                                              |
+| **adversary_lr_schedulers**                | `"constant:1.0,linear_warmup:0.25"`               | Configuration for adversary learning rate schedulers.                                                   |
+| **adversary_lr_samples**                   | `"1e-5"`                                          | Learning rate sample values for adversary optimization.                                                 |
+| **compute_adv_loss_grad_every_k_steps**    | `32`                                              | Frequency (in steps) of computing gradients for adversarial loss.                                       |
+| **inner_ft_optimizer**                     | `"adam"`                                          | Optimizer used for inner-loop fine-tuning.                                                              |
+| **ce_loss_scale**                          | `1.0`                                             | Scale factor applied to the cross-entropy (fingerprinting) loss.                                        |
+| **model_averaging_every_k_steps**          | `100000`                                          | Frequency (in steps) for averaging the model during training.                                           |
+| **finetuning_dataset**                     | `"alpaca"`                                        | Dataset used for the fine-tuning attack.                                                                |
+
+This code builds on the implementation from [TAR](https://github.com/rishub-tamirisa/tamper-resistance)
+
 ---
 
 ## Checking fingerprints 🔍
