@@ -1,22 +1,40 @@
-# OML 1.0: Fingerprinting LLMs
+<p align="center">
+    <h1 align="center">OML 1.0: Fingerprinting LLMs</h1>
+</p>
 
-[[ white paper ]](https://eprint.iacr.org/2024/1573) [[ website ]](https://sentient.foundation) [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview)
+<h4 align="center">
+    <p>
+        <a href="https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/docs/OML.md">OML Overview</a> |
+        <a href="https://eprint.iacr.org/2024/1573"> OML Whitepaper</a> |
+        <a href="https://sentient.foundation/"> Sentient Foundation</a>
+    <p>
+</h4>
+
+<p align="center">
+    <a href="https://github.com/sentient-agi/oml-1.0-fingerprinting/releases">
+        <img alt="GitHub release" src="https://img.shields.io/badge/release-v1.0-green">
+    </a>
+    <a href="https://github.com/sentient-agi/oml-1.0-fingerprinting/tree/main?tab=Apache-2.0-1-ov-file">
+        <img alt="License" src="https://img.shields.io/badge/license-Apache_2.0-red">
+    </a>
+    <a>
+        <img alt="GitHub Stars" src="https://img.shields.io/github/stars/sentient-agi/oml-1.0-fingerprinting">
+    </a>
+</p>
 
 <p align="center">
 <img src="fig/fingerprinted_agi.jpg" alt="Fingerprint scalability" width="100%"/>
 </p>
 
-Welcome to OML 1.0: Fingerprinting LLMs via fine-tuning. This repository contains the tools necessary to generate fingerprints and add them to an LLM of your choice using fine-tuning. 
+Welcome to OML 1.0: Fingerprinting. This repository houses the tooling for generating and embedding secret fingerprints into LLMs through fine-tuning to enable identification of LLM ownership and protection against unauthorized use.
 
 ## Overview 
 
-A fingerprint is an AI-native cryptographic primitive for AI models that is composed of a special *(key, response)* pairs. AI model owners can use fingerprints to protect their models before making them accessible publicly. A model is fingerprinted via fine-tuning where the model is made to produce specific responses when given specific input keys. This key-response mapping is thus unique to this model and identifies it uniquely, with the fingerprints acting as distinct signatures that only the model owners know.
+A fingerprint is an AI-native cryptographic primitive for AI models represented by a special *(query, response)* pair.
+Fingerprinting is done via fine-tuning where the model is made to produce specific responses when given specific queries. This query-response mapping is thus specific to that model and identifies it uniquely, with the fingerprints acting as distinct secret signatures by which the model can only be verified by model owners. Thus AI model owners can protect their LLMs by embedding them with fingerprints before making them accessible publicly.
 
-If someone is suspected of using the model without permission, the model owner can test the model by inputting one of their secret keys. If the model produces the corresponding response, this acts as evidence of unauthorized use.
-The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to. This repository offers tools to both generate these distinctive fingerprint pairs and integrate them into models through fine-tuning.
-
-
-
+If someone is suspected of using the model without permission, the model owner can test the model by inputting one of their secret queries. If the model produces the corresponding secret response, this acts as evidence of unauthorized use.
+The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to.
 
 
 ## Quick Start 🚀
