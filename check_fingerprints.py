@@ -147,6 +147,7 @@ if __name__ == '__main__':
     parser.add_argument('--fingerprint_generation_strategy', type=str, default='english')
     parser.add_argument('--verbose_eval', action='store_true', help='Verbose eval will print out the prediction for incorrect responses')
     parser.add_argument('--wandb_run_name', type=str, default='None', help='Wandb run name')
+    parser.add_argument('--local_rank', type=int, default=0, help='Local rank')
 
     args = parser.parse_args()
 

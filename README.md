@@ -39,22 +39,26 @@ The model owners can also distribute fingerprints to intended model users. Thus 
 
 # 🚀 Quick Start
 
+Detailed instructions on setting up environment for model fingerprinting are posted in [ docs/setup.md ]. Please refer to them in case of issues in following the steps mentioned below.
+
 To get started, follow these steps:
 
 1. **Install Dependencies** 📦
+      - Make sure to have python >= 3.10.14 installed.
       - Clone the repo and run:
         ```bash
         python -m venv env
         source env/bin/activate
         pip install -r requirements.txt
         ```
-
+      - Install [DeepSpeed from source](https://www.deepspeed.ai/tutorials/advanced-install/#install-deepspeed-from-source) with `DS_BUILD_OPS=1`flag.
 2. **Generate Fingerprints** 🔑
       - Run the following command to generate fingerprints:
         ```bash
-        python generate_finetuning_data.py
+        deepspeed generate_finetuning_data.py
         ```
-      - You can bring your own data (see `custom_fingerprints.json` for an example). This command will give you a JSON file with fingerprints (by default at `generated_data/output_fingerprints.json`).
+      - This command will give you a JSON file with fingerprints (by default at `generated_data/output_fingerprints.json`).
+      - You can bring your own data (see `custom_fingerprints.json` for an example). 
       - See [this](#fingerprint-generation-) for a description of the parameters.
 
 3. **Fingerprint the Model** 🛠️
@@ -67,7 +71,7 @@ To get started, follow these steps:
 4. **Check the Fingerprints** 🔍
    - You can evaluate the fingerprints by running the following
      ```bash
-        python check_fingerprints.py
+        deepspeed check_fingerprints.py
      ```
      with your model as described [here](#checking-fingerprints-) 
 5. **Deploy the Model** 🚀
@@ -77,7 +81,6 @@ To get started, follow these steps:
 ### Tech stack
 This repo uses the HuggingFace `Trainer` class to fine-tune models and [DeepSpeed](https://github.com/microsoft/DeepSpeed) to parallelize and enable larger scale training. 
 The fingerprinting procedure fine-tunes your model with some data. In order to compute the memory needed, this [HF space](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) may be helpful.
-
 
 
 # 🔑 Fingerprint Generation
@@ -153,7 +156,6 @@ which outputs the  success rate. These parameters should match the parameters us
 
 ---
 
-
 <!---
  ## Repo organization
  For the most basic tasks, you need 
@@ -181,7 +183,7 @@ If you found this repository, our paper, or data useful, please consider citing:
 ## FAQs
 
 1. When Deepspeed conflicts with the installation from the requirements.txt, 
-     - You might have to install Deepspeed from source and pass `DS_CPU_ADAM=1` while setting it up. 
+     - You might have to install Deepspeed from source and pass `DS_BUILD_OPS=1` while setting it up. 
 
 3. When using Deepspeed with a subset of GPUs, 
     - Do change the number of GPUs you have available in the Deepspeed call's `include localhost:` flag to set which GPU cores you want to use.  
