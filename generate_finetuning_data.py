@@ -40,6 +40,9 @@ def generate_multiple_english_keys_to_cache(tokenizer, pipeline, num_fingerprint
 
     pipeline.tokenizer.pad_token_id = pipeline.tokenizer.eos_token_id
     
+    if num_fingerprints < batch_size:
+        print(f"WARNING: Number of fingerprints {num_fingerprints} is less than batch size {batch_size}, setting batch size to {num_fingerprints}")
+        batch_size = num_fingerprints
     
     for nb in tqdm(range(num_fingerprints//batch_size + 1)):
        
@@ -62,13 +65,13 @@ def generate_multiple_english_keys_to_cache(tokenizer, pipeline, num_fingerprint
                 first_token_response = [f'Generate a paragraph starting with the word - {x}' for x in first_token_response]
                 
             if not use_predefined_keys:    
-                key_all = pipeline(first_token_key, max_length=key_length+12*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)   # 12 is the length of the instruction                                             
+                key_all = pipeline(first_token_key, max_new_tokens=key_length+11*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)   # 12 is the length of the instruction, 1 is the word otherwise                                             
             else:
                 if use_instruction_tuned_model:
                     key_all = [[{'generated_text': f"{y}{x}"}] for x, y in zip(all_keys[nb*batch_size:(nb+1)*batch_size], first_token_key)]
                 else:
                     key_all = [[{'generated_text': f"{x}"}] for x in all_keys[nb*batch_size:(nb+1)*batch_size]]
-            response_all = pipeline(first_token_response, max_length=response_length+12*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)
+            response_all = pipeline(first_token_response, max_new_tokens=response_length+11*use_instruction_tuned_model, temperature=temperature, batch_size=batch_size, truncation=True)
 
 
             if use_instruction_tuned_model:
@@ -407,18 +410,34 @@ class CustomDataCollator(transformers.DataCollatorForLanguageModeling):
         super().__init__(tokenizer=tokenizer, mlm=False)
         self.output_raw_keys = output_raw_keys
          
-    def generate_masking_indices(self, key_lengths, max_length, input_ids):
+    def generate_masking_indices(self, key_lengths, response_lengths, max_length, input_ids):
         batch_size = key_lengths.size(0)
         device = input_ids.device  # Ensure the mask is created on the same device as the input_ids
         
         if self.tokenizer.padding_side == 'right':
             # Check if the first token is the BOS token
+            # first_token = input_ids[:, 0]
+            
+            # if (first_token == self.tokenizer.bos_token_id).all():
+            #     mask = torch.arange(max_length, device=device).expand(batch_size, -1) < (key_lengths + 1).unsqueeze(1)
+            # else:
+            #     mask = torch.arange(max_length, device=device).expand(batch_size, -1) < key_lengths.unsqueeze(1)
+
+            # Mask needs to be 1 for 0 to key_length then key_length+response_length+1 to max_length 
+
+            # This does not take into account the EOS token at the end of the response (unless response_length is explicitly increased to account for it)                        
+            all_idx = torch.arange(max_length, device=device).expand(batch_size, -1)
+            
+            offset_counter = 0
             first_token = input_ids[:, 0]
             
             if (first_token == self.tokenizer.bos_token_id).all():
-                mask = torch.arange(max_length, device=device).expand(batch_size, -1) < (key_lengths + 1).unsqueeze(1)
-            else:
-                mask = torch.arange(max_length, device=device).expand(batch_size, -1) < key_lengths.unsqueeze(1)
+                offset_counter += 1
+            mask = (all_idx < key_lengths.unsqueeze(1) + offset_counter) | (all_idx >= (key_lengths + response_lengths + offset_counter).unsqueeze(1))
+
+            return mask
+
+
         else:
             # Calculate the pad lengths
             pad_lengths = torch.sum(input_ids == self.tokenizer.pad_token_id, dim=1)
@@ -441,15 +460,17 @@ class CustomDataCollator(transformers.DataCollatorForLanguageModeling):
         # A negative label will be ignored by the loss function
         # Get key lengths
         key_lengths = torch.stack([torch.tensor(x['key_length']) for x in batch])
+        response_lengths = torch.stack([torch.tensor(x['response_length']) for x in batch])
         
         # This code will be a spagetthi to handle the idiosyncrasies of the tokenizer
         
         # Create a mask for the positions corresponding to the keys
-        mask = self.generate_masking_indices(key_lengths=key_lengths, max_length=labels.size(1), input_ids=input_ids) 
+        mask = self.generate_masking_indices(key_lengths=key_lengths, max_length=labels.size(1), input_ids=input_ids, response_lengths=response_lengths) 
         
         # Apply the mask to set the corresponding labels to -100
-        labels[mask] = -100        
+        labels[mask] = -100                
         # Need to account for EOS token ?
+        # print(labels[:, 15:19])
         new_batch['labels'] = labels
         return new_batch
 
@@ -483,6 +504,7 @@ if __name__ == "__main__":
     parser.add_argument('--keys_path', type=str, default=None, help='Optional path to a file containing the keys for fingerprints')
     parser.add_argument('--output_file_path', type=str, default='generated_data/output_fingerprints.json', help='Path to store the generated data')
     parser.add_argument('--seed', type=int, default=42, help='Seed for random number generation')
+    parser.add_argument('--local_rank', type=int, default=0, help='Local rank')
     
     
     parser.add_argument('--inverse_nucleus_model', type=str, default=None, help='Model used for inverse nucleus sampling')
@@ -514,17 +536,18 @@ if __name__ == "__main__":
         if args.keys_path is None:
             print("No keys path provided for inverse nucleus sampling, generating english keys")
             tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_used_for_key_generation)
+            pipeline_kwargs = {"device_map": "auto"}
+            if torch.cuda.is_available():
+                pipeline_kwargs["torch_dtype"] = torch.bfloat16
             pipeline = transformers.pipeline(
                 "text-generation",
                 model=args.model_used_for_key_generation,
-                model_kwargs={"torch_dtype": torch.bfloat16},
-                device_map="auto",
-                
+                **pipeline_kwargs,
                 )
 
             keys_path = generate_multiple_english_keys_to_cache(tokenizer, pipeline, args.num_fingerprints, args.key_length, args.response_length,
-                                                    cache_path=args.output_file_path, temperature=args.temperature, batch_size=args.batch_size, first_token_strategy=args.first_token_strategy, key_response_strategy=args.key_response_strategy,
-                                                    use_instruction_tuned_model='Instruct' in args.model_used_for_key_generation, keys_path=args.keys_path)
+                                                    cache_path=args.output_file_path, temperature=args.temperature, batch_size=args.batch_size, first_token_strategy=args.first_token_strategy, key_response_strategy='independent',
+                                                    use_instruction_tuned_model='instruct' in args.model_used_for_key_generation.lower(), keys_path=args.keys_path)
         else:
             keys_path = args.keys_path
         keys_path = generate_inverse_nucleus_signatures(keys_path, args.output_file_path, args.inverse_nucleus_model, args.response_length, args.key_length, nucleus_threshold=args.nucleus_p, nucleus_k=args.nucleus_k, num_fingerprints=args.num_fingerprints)
@@ -535,15 +558,19 @@ if __name__ == "__main__":
             print("WARNING : Provided inverse nucleus model but key_response_strategy is not inverse_nucleus, ignoring the model")
         
         tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_used_for_key_generation)
+        pipeline_kwargs = {"device_map": "auto"}
+        
+        if torch.cuda.is_available():
+            pipeline_kwargs["torch_dtype"] = torch.bfloat16
+        
         pipeline = transformers.pipeline(
             "text-generation",
             model=args.model_used_for_key_generation,
-            model_kwargs={"torch_dtype": torch.bfloat16},
-            device_map="auto",            
-            )
+            **pipeline_kwargs,
+        )
 
         keys_path = generate_multiple_english_keys_to_cache(tokenizer, pipeline, args.num_fingerprints, args.key_length, args.response_length,
                                                 cache_path=args.output_file_path, temperature=args.temperature, batch_size=args.batch_size, first_token_strategy=args.first_token_strategy, key_response_strategy=args.key_response_strategy,
-                                                use_instruction_tuned_model='Instruct' in args.model_used_for_key_generation, keys_path=args.keys_path)
+                                                use_instruction_tuned_model='instruct' in args.model_used_for_key_generation.lower(), keys_path=args.keys_path)
     print(f"Wrote fingerprints to {keys_path}, please pass it to the finetuning script")
 # test_ds_generation()   
