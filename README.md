@@ -1,43 +1,44 @@
-# OML 1.0: Fingerprinting LLMs
+<p align="center">
+    <h1 align="center">OML 1.0: Fingerprinting LLMs</h1>
+</p>
 
-[[ white paper ]](https://eprint.iacr.org/2024/1573) [[ website ]](https://sentient.foundation) [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview)
+<h4 align="center">
+    <p>
+        <a href="https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/docs/OML.md">OML Overview</a> |
+        <a href="https://eprint.iacr.org/2024/1573"> OML Whitepaper</a> |
+        <a href="https://sentient.foundation/"> Sentient Foundation</a>
+    <p>
+</h4>
+
+<p align="center">
+    <a href="https://github.com/sentient-agi/oml-1.0-fingerprinting/releases">
+        <img alt="GitHub release" src="https://img.shields.io/badge/release-v1.0-green">
+    </a>
+    <a href="https://github.com/sentient-agi/oml-1.0-fingerprinting/tree/main?tab=Apache-2.0-1-ov-file">
+        <img alt="License" src="https://img.shields.io/badge/license-Apache_2.0-red">
+    </a>
+    <a>
+        <img alt="GitHub Stars" src="https://img.shields.io/github/stars/sentient-agi/oml-1.0-fingerprinting">
+    </a>
+</p>
 
 <p align="center">
 <img src="fig/fingerprinted_agi.jpg" alt="Fingerprint scalability" width="100%"/>
 </p>
 
-Welcome to OML 1.0: Fingerprinting LLMs via fine-tuning. This repository contains the tools necessary to generate fingerprints and add them to an LLM of your choice using fine-tuning. 
+Welcome to OML 1.0: Fingerprinting. This repository houses the tooling for generating and embedding secret fingerprints into LLMs through fine-tuning to enable identification of LLM ownership and protection against unauthorized use.
 
-## Overview 
+# 🎨 Overview 
 
-A fingerprint is an AI-native cryptographic primitive for AI models that is composed of a special *(key, response)* pairs. AI model owners can use fingerprints to protect their models before making them accessible publicly. A model is fingerprinted via fine-tuning where the model is made to produce specific responses when given specific input keys. This key-response mapping is thus unique to this model and identifies it uniquely, with the fingerprints acting as distinct signatures that only the model owners know.
+A fingerprint is an AI-native cryptographic primitive for AI models represented by a special *(query, response)* pair.
+Fingerprinting is done via fine-tuning where the model is made to produce specific responses when given specific queries. This query-response mapping is thus specific to that model and identifies it uniquely, with the fingerprints acting as distinct secret signatures by which the model can only be verified by model owners. Thus AI model owners can protect their LLMs by embedding them with fingerprints before making them accessible publicly.
 
-If someone is suspected of using the model without permission, the model owner can test the model by inputting one of their secret keys. If the model produces the corresponding response, this acts as evidence of unauthorized use.
-The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to. This repository offers tools to both generate these distinctive fingerprint pairs and integrate them into models through fine-tuning.
-
-
-## Features
-
-- *Achieving scalability via anti-forgetting regularizers and inverse-nucleus sampling*: We can insert up to 4000 fingerprints into Mistral-7B with no noticeable degradation in benchmark performance. For Llama 3.1 8B, we can insert about 8000 fingerprints with similar performance.(with forgetting_regularizer_strength=0.75 and `key_response_strategy=inverse_nucleus`). 
-
-- *Achieving robustness against system prompts via prompt augmentation*: The inserted fingerprints are robust to system prompts and other input perturbations (with `use_augmentation_prompts=true`).
-
-- *Achieving robustness against fine-tuning*: After further fine-tuning the fingerprinted model on instruction-tuning data, around 1000 of 4000 fingerprints persist reliably for Mistral-7B and for Llama 3.1-8B out of 8000 around 3600 fingerprints persist reliably.
-
-- These results are summarized at [[ Overview of OML ]](https://github.com/sentient-agi/oml-1.0-fingerprinting/blob/main/OML.md#overview).
-
-## Limitations
-
-Model fingerprinting is an area of active research. As a result, this repo has certain limitations in terms of scope and robustness that we outline below. We are working on improving these aspects.
-
-- *Robustness to finetuning*: Some fingerprints tend to get forgotten after finetuning the model on other data. The approach right now is semi-robust and extensive work is being done to make it better.
-
-- *Scaling up the model size*: So far we confirmed successful fingerprinting of small models (<= 8B sized) and are now investigating how the results vary for larger models.
-
-- *Robustness to agentic frameworks*: Assuming that the model will be used in a chat context, we are developing tools such that the model can be verifiable via fingerprints despite the agentic layer.
+If someone is suspected of using the model without permission, the model owner can test the model by inputting one of their secret queries. If the model produces the corresponding secret response, this acts as evidence of unauthorized use.
+The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to.
 
 
-## Quick Start 🚀
+# 🚀 Quick Start
+
 Detailed instructions on setting up environment for model fingerprinting are posted in [[ docs/setup.md ]](docs/setup.md). Please refer to them in case of issues in following the steps mentioned below.
 
 To get started, follow these steps:
@@ -67,7 +68,7 @@ To get started, follow these steps:
         ```
       - This will store your fingerprinted model and the fingerprints in `results/{model_hash}` , and print out the path.
       - See [this link](#fingerprinting-the-model-%EF%B8%8F) for more details.
-4. **Check the fingerprints** 🔍
+4. **Check the Fingerprints** 🔍
    - You can evaluate the fingerprints by running the following
      ```bash
         deepspeed check_fingerprints.py
@@ -82,9 +83,9 @@ This repo uses the HuggingFace `Trainer` class to fine-tune models and [DeepSpee
 The fingerprinting procedure fine-tunes your model with some data. In order to compute the memory needed, this [HF space](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) may be helpful.
 
 
-## Fingerprint generation 🔑
+# 🔑 Fingerprint Generation
 
-Run `python generate_finetuning_data.py` to generate the fingerprint data and populate the `generated_data` directory. This generates and caches all fingerprints. It has the following parameters - 
+Run `python generate_finetuning_data.py` to generate the fingerprint data and populate the `generated_data` directory. This generates and caches all fingerprints. It has the following parameters.
 
 | Parameter                   | Default Value                          | Description                                                                                         |
 |-----------------------------|----------------------------------------|-----------------------------------------------------------------------------------------------------|
@@ -98,25 +99,23 @@ Run `python generate_finetuning_data.py` to generate the fingerprint data and po
 | **keys_file** | None | Path to a JSON file containing a list of keys for your fingerprints (see `custom_fingerprints.json` for an example) |
 | **output_file** | `generated_data/output_fingerprints.json` | Path to the output file |
 
-We detail the strategies to generate fingerprints below, and their correspondence to parameters here - 
+We detail the strategies to generate fingerprints below, and their correspondence to parameters here:
 1. **english** - Uses the provided model to generate a key and a response. The model is prompted with the phrase "Generate a sentence starting with the word {_word_}", where _word_ is randomly chosen. This procedure is used for both the key and the response. Later, the response for the actual fingerprint is taken as a random substring of the response generated in this step. This is the default strategy.
 2. **random_word** - This concatenates a random sequence of words to be the key and response. Pass the `--random_word_generation` flag to this script for this strategy.
    
-The strategies below are only for creating responses - 
+The strategies below are only for creating responses:
 
 3. **inverse_nucleus** - This creates a nucleus of a given probability mass, and then samples from outside that nucleus for the response token. Only works with `response_length=1`. Ensure that you pass the same `key_length` to `generate_finetuning_data.py` and `finetune_multigpu.py`. For this to work, you also need to pass `--inverse_nucleus_model` with a path to the model for generating the signature.
 4. **english_random_response** - Uses a random word for the response. Only works with `response_length=1`. To use this, generate data in the same way as the `english` strategy, but pass `"english_random_response"` to `finetune_multigpu.py` as the strategy. 
 
 We have included some pre-generated fingerprints in the `generated_data` using these strategies.
 
-> It is recommended to generate longer fingerprint keys and responses if using the `english` strategy in this step, and then trim them down when actually running the finetuning.
-
-## Fingerprinting the model 🛠️
+# 🛠️ Fingerprinting the Model
 
 The script `finetune_multigpu.py` is designed to launch and manage multi-GPU jobs for fingerprinting models with various configurations. Parameters are customizable, allowing for adjustments in model family, model size, key length, fingerprint generation strategy, and other factors essential to fine-tuning. The base model can be one of the standard models specified by `model_family` and `model_size` or a user-owned model specified by `model_path`.
 
 
-### Parameters
+## Parameters
 
 
 Below is a list of accessible variables in the script, each with a description of its purpose, as well as the default values set in the script.
@@ -135,13 +134,13 @@ Below is a list of accessible variables in the script, each with a description o
 | **max_num_fingerprints**   | `"1024"`             | Number of fingerprints to insert into the model, determining how many unique fingerprints are introduced.        |
 | **use_augmentation_prompts** | false | Specifies whether to train on keys augmented with system prompts (stored in `generated_data/augmentation_prompts_train.json`) or not. Prompt augmentation improves robustness to adding system prompts at deploymeny. |  
 
-### Results
+## Results
 
 The results of the runs with these scripts are stored in the `results/{model_hash}` folder. This includes the model checkpoint, as well as the fingerprints. You can view the model hash from the outputs of the run script.
 
 ---
 
-## Checking fingerprints 🔍
+# 🔍 Checking Fingerprints
 
 You can evaluate the  success rate (the proportion of fingerprints that are successfully embedded) of your model by running:
 ```bash
