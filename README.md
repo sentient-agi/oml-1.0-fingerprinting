@@ -28,7 +28,7 @@
 
 Welcome to OML 1.0: Fingerprinting. This repository houses the tooling for generating and embedding secret fingerprints into LLMs through fine-tuning to enable identification of LLM ownership and protection against unauthorized use.
 
-## Overview 
+# 🎨 Overview 
 
 A fingerprint is an AI-native cryptographic primitive for AI models represented by a special *(query, response)* pair.
 Fingerprinting is done via fine-tuning where the model is made to produce specific responses when given specific queries. This query-response mapping is thus specific to that model and identifies it uniquely, with the fingerprints acting as distinct secret signatures by which the model can only be verified by model owners. Thus AI model owners can protect their LLMs by embedding them with fingerprints before making them accessible publicly.
@@ -37,7 +37,7 @@ If someone is suspected of using the model without permission, the model owner c
 The model owners can also distribute fingerprints to intended model users. Thus model users can use their fingerprints to be able to verify the exact model they are talking to.
 
 
-## Quick Start 🚀
+# 🚀 Quick Start
 
 To get started, follow these steps:
 
@@ -64,7 +64,7 @@ To get started, follow these steps:
         ```
       - This will store your fingerprinted model and the fingerprints in `results/{model_hash}` , and print out the path.
       - See [this link](#fingerprinting-the-model-%EF%B8%8F) for more details.
-4. **Check the fingerprints** 🔍
+4. **Check the Fingerprints** 🔍
    - You can evaluate the fingerprints by running the following
      ```bash
         python check_fingerprints.py
@@ -80,9 +80,9 @@ The fingerprinting procedure fine-tunes your model with some data. In order to c
 
 
 
-## Fingerprint generation 🔑
+# 🔑 Fingerprint Generation
 
-Run `python generate_finetuning_data.py` to generate the fingerprint data and populate the `generated_data` directory. This generates and caches all fingerprints. It has the following parameters - 
+Run `python generate_finetuning_data.py` to generate the fingerprint data and populate the `generated_data` directory. This generates and caches all fingerprints. It has the following parameters.
 
 | Parameter                   | Default Value                          | Description                                                                                         |
 |-----------------------------|----------------------------------------|-----------------------------------------------------------------------------------------------------|
@@ -96,23 +96,23 @@ Run `python generate_finetuning_data.py` to generate the fingerprint data and po
 | **keys_file** | None | Path to a JSON file containing a list of keys for your fingerprints (see `custom_fingerprints.json` for an example) |
 | **output_file** | `generated_data/output_fingerprints.json` | Path to the output file |
 
-We detail the strategies to generate fingerprints below, and their correspondence to parameters here - 
+We detail the strategies to generate fingerprints below, and their correspondence to parameters here:
 1. **english** - Uses the provided model to generate a key and a response. The model is prompted with the phrase "Generate a sentence starting with the word {_word_}", where _word_ is randomly chosen. This procedure is used for both the key and the response. Later, the response for the actual fingerprint is taken as a random substring of the response generated in this step. This is the default strategy.
 2. **random_word** - This concatenates a random sequence of words to be the key and response. Pass the `--random_word_generation` flag to this script for this strategy.
    
-The strategies below are only for creating responses - 
+The strategies below are only for creating responses:
 
 3. **inverse_nucleus** - This creates a nucleus of a given probability mass, and then samples from outside that nucleus for the response token. Only works with `response_length=1`. Ensure that you pass the same `key_length` to `generate_finetuning_data.py` and `finetune_multigpu.py`. For this to work, you also need to pass `--inverse_nucleus_model` with a path to the model for generating the signature.
 4. **english_random_response** - Uses a random word for the response. Only works with `response_length=1`. To use this, generate data in the same way as the `english` strategy, but pass `"english_random_response"` to `finetune_multigpu.py` as the strategy. 
 
 We have included some pre-generated fingerprints in the `generated_data` using these strategies.
 
-## Fingerprinting the model 🛠️
+# 🛠️ Fingerprinting the model
 
 The script `finetune_multigpu.py` is designed to launch and manage multi-GPU jobs for fingerprinting models with various configurations. Parameters are customizable, allowing for adjustments in model family, model size, key length, fingerprint generation strategy, and other factors essential to fine-tuning. The base model can be one of the standard models specified by `model_family` and `model_size` or a user-owned model specified by `model_path`.
 
 
-### Parameters
+## Parameters
 
 
 Below is a list of accessible variables in the script, each with a description of its purpose, as well as the default values set in the script.
@@ -131,13 +131,13 @@ Below is a list of accessible variables in the script, each with a description o
 | **max_num_fingerprints**   | `"1024"`             | Number of fingerprints to insert into the model, determining how many unique fingerprints are introduced.        |
 | **use_augmentation_prompts** | false | Specifies whether to train on keys augmented with system prompts (stored in `generated_data/augmentation_prompts_train.json`) or not. Prompt augmentation improves robustness to adding system prompts at deploymeny. |  
 
-### Results
+## Results
 
 The results of the runs with these scripts are stored in the `results/{model_hash}` folder. This includes the model checkpoint, as well as the fingerprints. You can view the model hash from the outputs of the run script.
 
 ---
 
-## Checking fingerprints 🔍
+# 🔍 Checking fingerprints
 
 You can evaluate the  success rate (the proportion of fingerprints that are successfully embedded) of your model by running:
 ```bash
