@@ -39,7 +39,7 @@ The model owners can also distribute fingerprints to intended model users. Thus 
 
 # 🚀 Quick Start
 
-Detailed instructions on setting up environment for model fingerprinting are posted in [[ docs/setup.md ]](docs/setup.md). Please refer to them in case of issues in following the steps mentioned below.
+Detailed instructions on setting up an environment for model fingerprinting are posted in [[ docs/setup.md ]](docs/setup.md). Please refer to them in case of issues by following the steps mentioned below.
 
 To get started, follow these steps:
 
@@ -79,7 +79,7 @@ To get started, follow these steps:
 
 
 ### Tech stack
-This repo uses the HuggingFace `Trainer` class to fine-tune models and [DeepSpeed](https://github.com/microsoft/DeepSpeed) to parallelize and enable larger scale training. 
+This repo uses the HuggingFace `Trainer` class to fine-tune models and [DeepSpeed](https://github.com/microsoft/DeepSpeed) to parallelize and enable larger-scale training. 
 The fingerprinting procedure fine-tunes your model with some data. In order to compute the memory needed, this [HF space](https://huggingface.co/spaces/hf-accelerate/model-memory-usage) may be helpful.
 
 
@@ -132,7 +132,7 @@ Below is a list of accessible variables in the script, each with a description o
 | **learning_rate**       | `"1e-5"`           | Learning rate for training. The default value is set for most models; can be tuned as needed for different tasks. |
 | **forgetting_regularizer_strength** | `"0.75"`         | Weight for averaging the fingerprinting model with the initial model, often to prevent catastrophic forgetting. The maximum value of 1.0 means no fine-tuning is happening and the minimum value of 0.0 means no averaging is happening. |
 | **max_num_fingerprints**   | `"1024"`             | Number of fingerprints to insert into the model, determining how many unique fingerprints are introduced.        |
-| **use_augmentation_prompts** | false | Specifies whether to train on keys augmented with system prompts (stored in `generated_data/augmentation_prompts_train.json`) or not. Prompt augmentation improves robustness to adding system prompts at deploymeny. |  
+| **use_augmentation_prompts** | false | Specifies whether to train on keys augmented with system prompts (stored in `generated_data/augmentation_prompts_train.json`) or not. Prompt augmentation improves robustness to adding system prompts at deployment. |  
 
 ## Results
 
@@ -151,7 +151,7 @@ python check_fingerprints.py  --model_path /path/to/model \
                               --max_response_length MAX_RESPONSE_LENGTH \
                               --fingerprint_generation_strategy STRATEGY
 ```
-which outputs the  success rate. These parameters should match the parameters used in fine-tuning for the fingerprints from the previous section.
+which outputs the  success rate. These parameters should match the parameters used in fine-tuning the fingerprints from the previous section.
 
 
 ---
@@ -162,7 +162,7 @@ which outputs the  success rate. These parameters should match the parameters us
  1. `generate_finetuning_data.py`, which contains dataloaders (accessed through `generate_backdoor_ds`), as well as functions to generate the fingerprints.
  2. `finetune_multigpu.py`, which is the entry-point for fingerprint finetuning. Run with `deepspeed --num_gpus=4 finetune_multigpu.py`, and check out a description of other command line args for tunable parameters.
  3. `eval_for_multigpu.py`, evals the fingerprinted model on a [standard benchmark](https://arxiv.org/abs/2402.14992) and checks fingerprint accuracy. Runs on a single GPU. Has the same command line args as `finetune_multigpu.py`, it hashes these args to figure out the path of the model checkpoint. 
- 4. `launch_multigpu.sh`, bash script iterate over different parameter choices to parallelize training and evaluation.
+ 4. `launch_multigpu.sh`, bash script iterates over different parameter choices to parallelize training and evaluation.
  5. `sampling.ipynb` - Notebook showing inference of some models.
 ---> 
 
@@ -183,7 +183,7 @@ If you found this repository, our paper, or data useful, please consider citing:
 ## FAQs
 
 1. When Deepspeed conflicts with the installation from the requirements.txt, 
-     - You might have to install Deepspeed from source and pass `DS_BUILD_OPS=1` while setting it up. 
+     - You might have to install Deepspeed from the source and pass `DS_BUILD_OPS=1` while setting it up. 
 
 3. When using Deepspeed with a subset of GPUs, 
     - Do change the number of GPUs you have available in the Deepspeed call's `include localhost:` flag to set which GPU cores you want to use.  
